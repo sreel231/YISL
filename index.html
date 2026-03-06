@@ -1,159 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <title>3D House Navigation Prototype</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            font-family: sans-serif;
-        }
-
-        #instructions {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            pointer-events: none;
-        }
-    </style>
+    <title>Virtual House Navigation</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 </head>
 
-<body>
-    <div id="instructions">
-        <strong>Controls:</strong><br>
-        W/A/S/D - Move<br>
-        Mouse - Look Around<br>
-        Click screen to start.
-    </div>
+<body style="margin:0; overflow:hidden;">
 
-    <script type="importmap">
-        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
-    </script>
+    <a-scene>
 
-    <script type="module">
-        import * as THREE from 'three';
-        import { PointerLockControls } from 'https://unpkg.com/three@0.160.0/examples/jsm/controls/PointerLockControls.js';
+        <!-- Camera with WASD navigation and look controls -->
+        <a-entity camera position="0 1.6 5" wasd-controls="acceleration: 20" look-controls>
+        </a-entity>
 
-        // --- SCENE SETUP ---
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x87ceeb); // Sky blue
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.shadowMap.enabled = true;
-        document.body.appendChild(renderer.domElement);
+        <!-- Lighting -->
+        <a-entity light="type: ambient; color: #ffffff; intensity: 0.5"></a-entity>
+        <a-entity light="type: directional; intensity: 0.7" position="5 10 5"></a-entity>
+        <a-entity light="type: point; intensity: 0.6; distance: 10" position="0 3 0"></a-entity>
 
-        // --- LIGHTING ---
-        const sunLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        sunLight.position.set(10, 20, 10);
-        sunLight.castShadow = true;
-        scene.add(sunLight);
-        scene.add(new THREE.AmbientLight(0x404040, 1.5)); // Soft room light
+        <!-- Floor -->
+        <a-plane rotation="-90 0 0" width="20" height="20" color="#ddd" shadow></a-plane>
 
-        // --- HOUSE BUILDER HELPERS ---
-        const textureLoader = new THREE.TextureLoader();
-        const createWall = (w, h, d, x, y, z, color = 0xeeeeee) => {
-            const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshStandardMaterial({ color }));
-            mesh.position.set(x, y, z);
-            mesh.receiveShadow = true;
-            mesh.castShadow = true;
-            scene.add(mesh);
-        };
+        <!-- House walls -->
+        <a-box position="0 1 -5" depth="10" height="2" width="0.2" color="#b0c4de"></a-box> <!-- Back wall -->
+        <a-box position="-5 1 0" depth="0.2" height="2" width="10" color="#b0c4de"></a-box> <!-- Left wall -->
+        <a-box position="5 1 0" depth="0.2" height="2" width="10" color="#b0c4de"></a-box> <!-- Right wall -->
+        <a-box position="0 1 5" depth="10" height="2" width="0.2" color="#b0c4de"></a-box> <!-- Front wall -->
 
-        const createFurniture = (w, h, d, x, y, z, color) => {
-            const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshStandardMaterial({ color }));
-            mesh.position.set(x, y, z);
-            mesh.castShadow = true;
-            scene.add(mesh);
-        };
+        <!-- Ceiling -->
+        <a-box position="0 2.1 0" width="10" depth="10" height="0.2" color="#f5f5f5"></a-box>
 
-        // Floor (The Foundation)
-        createWall(30, 0.2, 20, 0, 0, 0, 0x808080);
+        <!-- Furniture -->
 
-        // Walls (Outer Shell)
-        createWall(30, 4, 0.5, 0, 2, -10); // Back wall
-        createWall(30, 4, 0.5, 0, 2, 10);  // Front wall
-        createWall(0.5, 4, 20, -15, 2, 0); // Left wall
-        createWall(0.5, 4, 20, 15, 2, 0);  // Right wall
+        <!-- Sofa -->
+        <a-box position="-2 0.5 -2" width="2" height="1" depth="1" color="brown" shadow></a-box>
 
-        // Room Dividers
-        createWall(0.5, 4, 10, -5, 2, -5); // Kitchen/Living divider
-        createWall(10, 4, 0.5, 10, 2, 0);  // Bedroom wall
+        <!-- Table -->
+        <a-cylinder position="0 0.5 -1" radius="0.5" height="1" color="#8B4513" shadow></a-cylinder>
 
-        // --- FURNITURE SECTIONS ---
-        // Living Room (Center)
-        createFurniture(4, 0.5, 2, 0, 0.3, -5, 0x333333); // Sofa
-        createFurniture(1, 2, 4, -14, 1, 0, 0x4B2C20);   // Bookshelf
+        <!-- Plant -->
+        <a-cone position="2 0.5 -2" radius-bottom="0.3" height="1" color="green" shadow></a-cone>
 
-        // Kitchen (Left)
-        createFurniture(6, 1, 1.5, -12, 0.5, -8, 0xffffff); // Countertop
-        const kitchenLight = new THREE.PointLight(0xffaa00, 5, 10);
-        kitchenLight.position.set(-12, 3, -8);
-        scene.add(kitchenLight); // Warm kitchen glow
+        <!-- Lamp -->
+        <a-cylinder position="3 1 -3" radius="0.1" height="2" color="#FFFF99"></a-cylinder>
+        <a-entity light="type: point; color:#ffffaa; intensity:0.8; distance:5" position="3 2 -3"></a-entity>
 
-        // Bedroom (Right)
-        createFurniture(3, 0.8, 4, 10, 0.4, 5, 0x1a5e91); // Bed
-        const bedLight = new THREE.PointLight(0x00ffaa, 3, 8);
-        bedLight.position.set(10, 3, 5);
-        scene.add(bedLight); // Cool bedroom accent
+        <!-- Door -->
+        <a-box position="0 0.5 5" width="1" height="1.5" depth="0.1" color="#654321"></a-box>
 
-        // --- CONTROLS & NAVIGATION ---
-        const controls = new PointerLockControls(camera, document.body);
-        document.body.addEventListener('click', () => controls.lock());
+        <!-- Navigation helpers -->
+        <a-text value="Use WASD + Mouse to walk around" position="-4 2 -4" color="#000"></a-text>
 
-        let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
-        const onKeyDown = (e) => {
-            if (e.code === 'KeyW') moveForward = true;
-            if (e.code === 'KeyS') moveBackward = true;
-            if (e.code === 'KeyA') moveLeft = true;
-            if (e.code === 'KeyD') moveRight = true;
-        };
-        const onKeyUp = (e) => {
-            if (e.code === 'KeyW') moveForward = false;
-            if (e.code === 'KeyS') moveBackward = false;
-            if (e.code === 'KeyA') moveLeft = false;
-            if (e.code === 'KeyD') moveRight = false;
-        };
-        document.addEventListener('keydown', onKeyDown);
-        document.addEventListener('keyup', onKeyUp);
+    </a-scene>
 
-        camera.position.set(0, 1.6, 5); // Human eye level
-
-        // --- ANIMATION LOOP ---
-        const velocity = new THREE.Vector3();
-        const direction = new THREE.Vector3();
-
-        function animate() {
-            requestAnimationFrame(animate);
-            if (controls.isLocked) {
-                velocity.x -= velocity.x * 10.0 * 0.016;
-                velocity.z -= velocity.z * 10.0 * 0.016;
-                direction.z = Number(moveForward) - Number(moveBackward);
-                direction.x = Number(moveRight) - Number(moveLeft);
-                direction.normalize();
-
-                if (moveForward || moveBackward) velocity.z -= direction.z * 400.0 * 0.016;
-                if (moveLeft || moveRight) velocity.x -= direction.x * 400.0 * 0.016;
-
-                controls.moveRight(-velocity.x * 0.016);
-                controls.moveForward(-velocity.z * 0.016);
-            }
-            renderer.render(scene, camera);
-        }
-        animate();
-
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-    </script>
 </body>
 
 </html>
