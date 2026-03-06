@@ -1,23 +1,57 @@
+<!DOCTYPE html>
 <html>
 
 <head>
-    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <title>AR Interior Design with Lighting</title>
+
+    <!-- A-Frame Library -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+    <!-- AR.js Library -->
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+
 </head>
 
-<body>
+<body style="margin:0; overflow:hidden;">
 
-    <a-scene>
+    <a-scene embedded arjs>
 
-        <!-- 3D Landscape Background -->
-        <a-sky src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.jpg"></a-sky>
+        <!-- Camera -->
+        <a-entity camera></a-entity>
 
-        <!-- Ground -->
-        <a-plane rotation="-90 0 0" width="200" height="0" color="#7CFC00"></a-plane>
+        <!-- Lights -->
+        <!-- Ambient Light: soft, general illumination -->
+        <a-entity light="type: ambient; color: #ffffff; intensity: 0.5"></a-entity>
 
-        <!-- Example object -->
-        <!-- <a-box position="0 1 -4" color="red"></a-box> -->
+        <!-- Directional Light: simulates sunlight -->
+        <a-entity light="type: directional; color: #ffffff; intensity: 0.7" position="2 4 3"></a-entity>
 
-        <a-camera position="0 1.6 0"></a-camera>
+        <!-- Point Light: spot / lamp effect -->
+        <a-entity light="type: point; color: #ffffaa; intensity: 0.6; distance: 5" position="0 2 0"></a-entity>
+
+        <!-- Marker -->
+        <a-marker preset="hiro">
+
+            <!-- Floor -->
+            <a-plane position="0 0 0" rotation="-90 0 0" width="4" height="4" color="#cccccc">
+            </a-plane>
+
+            <!-- Sofa / Furniture -->
+            <a-box position="0 0.5 0" depth="1.5" height="1" width="2" color="brown" shadow="receive: true">
+            </a-box>
+
+            <!-- Table -->
+            <a-cylinder position="1 0.5 0" radius="0.3" height="1" color="#8B4513" shadow="receive: true">
+            </a-cylinder>
+
+            <!-- Plant -->
+            <a-cone position="-1 0.5 0" radius-bottom="0.3" height="1" color="green" shadow="receive: true">
+            </a-cone>
+
+        </a-marker>
+
+        <!-- Enable shadows -->
+        <a-entity light="type: directional; castShadow: true"></a-entity>
 
     </a-scene>
 
